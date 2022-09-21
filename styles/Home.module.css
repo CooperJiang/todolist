@@ -27,6 +27,10 @@
   flex-direction: column;
 }
 
+.active{
+  box-shadow: 10px 10px rgba(0,0,0,0.2);
+}
+
 .header{
   height: 16px;
   border-bottom: 1px solid #000;
@@ -38,6 +42,17 @@
   font-size: 12px;
   font-weight: 400;
   margin-left: 5px;
+  /* padding: 0 10px; */
+}
+
+.close::after{
+  content: "";
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
 }
 
 .drag{

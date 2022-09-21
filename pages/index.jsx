@@ -2,24 +2,27 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import {getRandomId} from '../utils/tools'
+import { getRandomId } from '../utils/tools'
 
 export default function Home() {
   const cvsRef = useRef();
   const mainRef = useRef();
   let [ctx] = useState(null);
   let [isMouseDown] = useState(false);
-  let [isDragDown] = useState(false);
-  let [mousedownPoint] = useState({ x: 0, y: 0 });
+  let [actveId, setActiveId] = useState(0);
+  let [isDragDown, setDragDown] = useState(false);
   let [manifestList, setManifestList] = useState([]);
-  let [cacheCreateManifestItem] = useState([{ x: 0,y: 0, width: 0,height: 0,left: null, right: null, top: null, bottom: null }]);
+  let [cacheCreateManifestItem] = useState([{ x: 0, y: 0, width: 0, height: 0, left: null, right: null, top: null, bottom: null }]);
   let [initZIndex, setZIndex] = useState(1000)
 
   useEffect(() => {
     draw();
     watchWindow();
-    createManifest();
   }, []);
+
+  // useEffect(() => {
+  //   console.log('gaibianle', isDragDown);
+  // }, [isDragDown])
 
   /* 绘制背景 */
   function draw() {
@@ -53,108 +56,127 @@ export default function Home() {
   }
 
   /* 点击便签 */
-  function hanlderClickManifest(event){
-    event.nativeEvent.stopImmediatePropagation()
-    event.stopPropagation()
-    event.preventDefault()
+  function hanlderClickManifest({id}) {
+    setActiveId(id)
+    manifestList.forEach( item => {
+      if(item.id === id ){
+        item.zIndex = initZIndex
+        setZIndex(initZIndex + 1)
+      }
+    })
+    setManifestList(manifestList)
   }
 
   /* 创建盒子 */
-  function createManifest() {
+  function handlerMainMousedown(e) {
+    e.stopPropagation()
+    if (e.target.id !== 'main') return;
     const main = document.getElementById('main')
-    main.onmousedown = (e) => {
-      if(e.target.id !== 'main') return;
-      ({ clientX: mousedownPoint.x, clientY: mousedownPoint.y } = e);
-      const { x, y } = mousedownPoint;
-      isMouseDown = true;
-      const activeDiv = document.createElement("div");
-      activeDiv.id = "createIn";
-      activeDiv.style.backgroundColor = `#c4bebe80`;
-      activeDiv.style.position = "absolute";
-      activeDiv.style.zIndex = 99999;
-      mainRef.current.style.cursor = "crosshair";
-      document.body.appendChild(activeDiv);
-    };
+    main.style.cursor = "crosshair";
+    /* 记录起始点 */
+    const mousedownPoint = {};
+    ({ clientX: mousedownPoint.x, clientY: mousedownPoint.y } = e);
+    isMouseDown = true;
+    const activeDiv = document.createElement("div");
+    activeDiv.id = "createIn";
+    activeDiv.style.backgroundColor = `#c4bebe80`;
+    activeDiv.style.position = "absolute";
+    activeDiv.style.zIndex = 99999;
+    document.body.appendChild(activeDiv);
 
-    main.onmousemove = (e) => {
+    document.onmousemove = (e) => {
       if (isMouseDown) {
         const { clientX, clientY } = e;
         const { x, y } = mousedownPoint;
         const activeDiv = document.getElementById("createIn");
-        /* 判断鼠标方向确定定位方向  左右*/
-        if (clientX - x < 0) {
-          activeDiv.style.left = null;
-          activeDiv.style.right = `${window.innerWidth - x}px`;
-          Object.assign(cacheCreateManifestItem, {left: null, right: window.innerWidth - x })
-        } else {
-          activeDiv.style.left = `${x}px`;
-          activeDiv.style.right = null;
-          Object.assign(cacheCreateManifestItem, {left: x, right: null })
+        const diffX = clientX - x
+        const diffY = clientY - y
+        /* 判断四种方向下left top的不同坐标 */
+        if (diffX > 0 && diffY > 0) {
+          Object.assign(cacheCreateManifestItem, { left: x, top: y })
         }
-        /* 上下 */
-        if (clientY - y < 0) {
-          activeDiv.style.top = null;
-          activeDiv.style.bottom = `${window.innerHeight - y}px`;
-          Object.assign(cacheCreateManifestItem, {top: null, bottom: window.innerHeight - y })
-        } else {
-          activeDiv.style.top = `${y}px`;
-          activeDiv.style.bottom = null;
-          Object.assign(cacheCreateManifestItem, {top: y, bottom: null })
+        if (diffX > 0 && diffY < 0) {
+          Object.assign(cacheCreateManifestItem, { left: x, top: clientY })
         }
+        if (diffX < 0 && diffY > 0) {
+          Object.assign(cacheCreateManifestItem, { left: clientX, top: y })
+        }
+        if (diffX < 0 && diffY < 0) {
+          Object.assign(cacheCreateManifestItem, { left: clientX, top: clientY })
+        }
+        const { left, top } = cacheCreateManifestItem
+        activeDiv.style.left = `${left}px`
+        activeDiv.style.top = `${top}px`
         activeDiv.style.width = `${Math.abs(x - clientX)}px`;
         activeDiv.style.height = `${Math.abs(y - clientY)}px`;
-        Object.assign(cacheCreateManifestItem, {width: Math.abs(x - clientX), height: Math.abs(y - clientY) })
+        Object.assign(cacheCreateManifestItem, { width: Math.abs(x - clientX), height: Math.abs(y - clientY) })
       }
     };
 
     /* 抬起鼠标， */
     document.onmouseup = (e) => {
-      isDragDown = false
-      if(!isMouseDown) return
+      main.style.cursor = "pointer";
+      if (!isMouseDown) return
       const activeDiv = document.getElementById("createIn");
-      if(!activeDiv) return
+      if (!activeDiv) return
       document.body.removeChild(activeDiv)
       isMouseDown = false;
       const { width, height } = cacheCreateManifestItem
-      if( width < 80 || height < 80) return;
+      if (width < 80 || height < 80) return;
       const id = getRandomId()
-      const newData = manifestList.concat([{...cacheCreateManifestItem,id, zIndex: initZIndex}])
-      console.log('initZIndex: ', initZIndex);
-      manifestList = newData
-      initZIndex++
-      console.log('newData: ', newData);
-      newData.length && setManifestList(newData)
-      /* 初始化cacheCreateManifestItem */
+      setManifestList([...manifestList, ...[{ ...cacheCreateManifestItem, id, zIndex: initZIndex }]])
+      setZIndex(initZIndex + 1)
       cacheCreateManifestItem.width = 0
       cacheCreateManifestItem.height = 0
-      mainRef.current.style.cursor = "pointer";
+      document.onmousemove = null
     };
   }
 
-  function hanlderManifestMouseDown(manifest, e){
-    console.log('manifest: ', manifest);
-    const { clientX, clientY } = e;
-    isDragDown = true
-    const { id, left, right, top, bottom } = manifest
-    const mani = document.getElementById(id)
-    const drag = document.getElementById('drag')
-    e.target.onmousemove = (e) => {
-      if(!isDragDown) return
-      const diffX = e.clientX - clientX
-      const diffY = e.clientY - clientY
-      console.log(diffX,diffY,'====',left + diffX);
-      if(left > 0){
-        main.style.left = `${left + diffX}px`
+  /* 移动便签的同时更新数据 */
+  function handlerUpdateManifest({ id }, x, y) {
+    manifestList.forEach(item => {
+      if (item.id === id) {
+        item.left = x
+        item.top = y
       }
-      if(top > 0){
-        // main.style.top = `${top + diffY}px`
-      }
-    }
-    e.target.onmouseup = (e) => {
-      console.log('抬起');
-      isDragDown = false
-    }
+    })
+    setManifestList(manifestList)
   }
+
+  /* 移动便签 */
+  function hanlderManifestMouseDown(manifest, e) {
+    hanlderClickManifest(manifest)
+    const main = document.getElementById('main')
+    main.style.cursor = "grabbing";
+    e.stopPropagation()
+    setDragDown(true)
+    const { clientX, clientY } = e;
+    const { id, left, top } = manifest
+    const curManifest = document.getElementById(id)
+    document.onmousemove = (e) => {
+      const diffX = Math.floor((e.clientX - clientX) / 10) * 10
+      const diffY = Math.floor((e.clientY - clientY) / 10) * 10
+      const curX = left + diffX
+      const curY = top + diffY
+      curManifest.style.left = `${curX}px`
+      curManifest.style.top = `${curY}px`
+      handlerUpdateManifest(manifest, curX, curY)
+    }
+    document.onmouseup = (e) => {
+      main.style.cursor = "pointer";
+      setDragDown(false)
+      document.onmousemove = null
+    } 
+  }
+
+  /* 删除 */
+  function handlerDelManifest({id},e){
+    e.stopPropagation()
+    const bool =  window.confirm("Are you sure you want to remove this memo?")
+    if(!bool) return
+    setManifestList(manifestList.filter( t=> t.id !== id))
+  }
+ 
 
   return (
     <div className={styles.container}>
@@ -167,27 +189,26 @@ export default function Home() {
       {/* canvas background */}
       <canvas className={styles.canvas} ref={cvsRef}></canvas>
 
-      <main className={styles.main} ref={mainRef} id="main">
+      <main className={styles.main} ref={mainRef} id="main" onMouseDown={(e) => handlerMainMousedown(e)}>
         {manifestList.map((item, index) => (
           <div
             key={item.id}
-            className={styles.manifest}
+            className={`${styles.manifest} ${isDragDown && actveId === item.id ? `${styles.active}` : ''}`}
             id={item.id}
             style={{
               width: item.width,
               height: item.height,
               left: item.left,
-              right: item.right,
               top: item.top,
-              bottom: item.bottom,
+              zIndex: item.zIndex
             }}
-            onClick={(event) => hanlderClickManifest(event)}
+            onClick={() => hanlderClickManifest(item)}
           >
             <div className={styles.header}>
-              <span className={styles.close}>x</span>
-              <span className={styles.drag} style={{cursor: isDragDown ? 'grabbing' : 'grab'}} onMouseDown={ (e) => hanlderManifestMouseDown(item,e) }></span>
+              <span className={styles.close}  onClick={(e) => handlerDelManifest(item,e)}>一</span>
+              <span className={styles.drag}  style={{ cursor: isDragDown ? 'grabbing' : 'grab' }} onMouseDown={(e) => hanlderManifestMouseDown(item, e)}></span>
             </div>
-            <div className={styles.content}></div>
+            <div className={styles.content}>==={JSON.stringify(isDragDown)}</div>
           </div>
         ))}
       </main>
