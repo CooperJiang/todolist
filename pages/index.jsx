@@ -1,28 +1,38 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { getRandomId } from '../utils/tools'
+import { getStorageItem, setStorageItem } from '../utils/storage'
+import { TODOLIST, THEME, LIGHT, DARK, defaultTodo } from '../constants/index'
 
 export default function Home() {
   const cvsRef = useRef();
   const mainRef = useRef();
   let [ctx] = useState(null);
-  let [isMouseDown] = useState(false);
   let [actveId, setActiveId] = useState(0);
   let [isDragDown, setDragDown] = useState(false);
   let [manifestList, setManifestList] = useState([]);
-  let [cacheCreateManifestItem] = useState([{ x: 0, y: 0, width: 0, height: 0, left: null, right: null, top: null, bottom: null }]);
-  let [initZIndex, setZIndex] = useState(1000)
+  let [cacheCreateManifestItem] = useState({ position: { left: null, top: null}, size: { width: 0, height: 0 }, zIndex: 0, text: "" });
+  let [zIndex, setZIndex] = useState(1000)
+  
+  const minManifestWidth = 80
+  const minManifestHeight = 80
 
   useEffect(() => {
     draw();
+    init()
     watchWindow();
   }, []);
 
-  // useEffect(() => {
-  //   console.log('gaibianle', isDragDown);
-  // }, [isDragDown])
+
+  /* 获取历史信息 */
+  function init(){
+    initThemeMode()
+    const storageTodo = getStorageItem(TODOLIST) || []
+    const manifestList = storageTodo.length ? storageTodo : defaultTodo
+    if(manifestList.length) setZIndex(Math.max(...manifestList.map( t => t.zIndex)))
+    setManifestList(manifestList)
+  }
 
   /* 绘制背景 */
   function draw() {
@@ -34,25 +44,41 @@ export default function Home() {
     const singel = 10;
     const wCount = Math.floor(width / singel);
     const hCount = Math.floor(height / singel);
+    const theme =  getStorageItem(THEME) || LIGHT
+    const color = theme === LIGHT ? "#00000080" : "#ffffff66";
     for (let i = 0; i < hCount; i++) {
       for (let j = 0; j < wCount; j++) {
-        drawPoint({ x: j * singel + 1, y: i * singel + 1 });
+        drawPoint({ x: j * singel + 1, y: i * singel + 1 }, color);
       }
     }
   }
 
   /* 绘制点 */
-  function drawPoint({ x, y }) {
+  function drawPoint({ x, y }, color) {
+    ctx.fillStyle = color
     ctx.beginPath();
-    ctx.arc(x, y, 1, 0, Math.PI * 2, true);
-    ctx.closePath();
-    ctx.fillStyle = "#ddd";
+    ctx.rect(x, y, 1, 1);
     ctx.fill();
   }
 
   /* 监听窗口变化 */
   function watchWindow() {
     window.onresize = () => draw();
+    window.addEventListener("keydown", handlerKeydown);
+  }
+
+  /*  */
+  function handlerKeydown(e){
+    if ((e.code === "KeyC" || e.keyCode === 67) && e.altKey) {
+      return toggleTheme();
+    }
+    if ((e.code === "KeyR" || e.keyCode === 82) && e.altKey) {
+      const bool = window.confirm('Are you sure you want to remove all to dos')
+      if(!bool) return;
+      setManifestList([])
+      setStorageItem(TODOLIST, [])
+      
+    }
   }
 
   /* 点击便签 */
@@ -60,8 +86,8 @@ export default function Home() {
     setActiveId(id)
     manifestList.forEach( item => {
       if(item.id === id ){
-        item.zIndex = initZIndex
-        setZIndex(initZIndex + 1)
+        item.zIndex = zIndex
+        setZIndex(zIndex + 1)
       }
     })
     setManifestList(manifestList)
@@ -76,7 +102,6 @@ export default function Home() {
     /* 记录起始点 */
     const mousedownPoint = {};
     ({ clientX: mousedownPoint.x, clientY: mousedownPoint.y } = e);
-    isMouseDown = true;
     const activeDiv = document.createElement("div");
     activeDiv.id = "createIn";
     activeDiv.style.backgroundColor = `#c4bebe80`;
@@ -85,62 +110,58 @@ export default function Home() {
     document.body.appendChild(activeDiv);
 
     document.onmousemove = (e) => {
-      if (isMouseDown) {
         const { clientX, clientY } = e;
         const { x, y } = mousedownPoint;
         const activeDiv = document.getElementById("createIn");
+        if(!activeDiv) return
         const diffX = clientX - x
         const diffY = clientY - y
         /* 判断四种方向下left top的不同坐标 */
         if (diffX > 0 && diffY > 0) {
-          Object.assign(cacheCreateManifestItem, { left: x, top: y })
+          Object.assign(cacheCreateManifestItem, { position: { left: x, top: y } })
         }
         if (diffX > 0 && diffY < 0) {
-          Object.assign(cacheCreateManifestItem, { left: x, top: clientY })
+          Object.assign(cacheCreateManifestItem, { position: { left: x, top: clientY }})
         }
         if (diffX < 0 && diffY > 0) {
-          Object.assign(cacheCreateManifestItem, { left: clientX, top: y })
+          Object.assign(cacheCreateManifestItem, { position: { left: clientX, top: y }})
         }
         if (diffX < 0 && diffY < 0) {
-          Object.assign(cacheCreateManifestItem, { left: clientX, top: clientY })
+          Object.assign(cacheCreateManifestItem, { position: { left: clientX, top: clientY }})
         }
-        const { left, top } = cacheCreateManifestItem
+        const { left, top } = cacheCreateManifestItem.position
         activeDiv.style.left = `${left}px`
         activeDiv.style.top = `${top}px`
         activeDiv.style.width = `${Math.abs(x - clientX)}px`;
         activeDiv.style.height = `${Math.abs(y - clientY)}px`;
-        Object.assign(cacheCreateManifestItem, { width: Math.abs(x - clientX), height: Math.abs(y - clientY) })
-      }
+        Object.assign(cacheCreateManifestItem, { size: { width: Math.abs(x - clientX), height: Math.abs(y - clientY) }})
     };
 
     /* 抬起鼠标， */
     document.onmouseup = (e) => {
+      document.onmousemove = null
       main.style.cursor = "pointer";
-      if (!isMouseDown) return
       const activeDiv = document.getElementById("createIn");
       if (!activeDiv) return
       document.body.removeChild(activeDiv)
-      isMouseDown = false;
-      const { width, height } = cacheCreateManifestItem
+      const { width, height } = cacheCreateManifestItem.size
       if (width < 80 || height < 80) return;
       const id = getRandomId()
-      setManifestList([...manifestList, ...[{ ...cacheCreateManifestItem, id, zIndex: initZIndex }]])
-      setZIndex(initZIndex + 1)
-      cacheCreateManifestItem.width = 0
-      cacheCreateManifestItem.height = 0
-      document.onmousemove = null
+      const updateData = [...manifestList, ...[{ ...cacheCreateManifestItem, id, zIndex: zIndex }]]
+      setManifestList(updateData)
+      setStorageItem(TODOLIST, updateData)
+      setZIndex(zIndex + 1)
     };
   }
 
-  /* 移动便签的同时更新数据 */
-  function handlerUpdateManifest({ id }, x, y) {
-    manifestList.forEach(item => {
-      if (item.id === id) {
-        item.left = x
-        item.top = y
-      }
+  /* 更新数据 */
+  function handlerUpdateManifest({ id }, changeData) {
+    const updateData = manifestList.map(item => {
+      if (item.id === id) Object.assign( item, changeData)
+      return item
     })
-    setManifestList(manifestList)
+    setManifestList(updateData)
+    setStorageItem(TODOLIST, manifestList)
   }
 
   /* 移动便签 */
@@ -151,7 +172,8 @@ export default function Home() {
     e.stopPropagation()
     setDragDown(true)
     const { clientX, clientY } = e;
-    const { id, left, top } = manifest
+    const { id, position } = manifest
+    const { left, top } = position
     const curManifest = document.getElementById(id)
     document.onmousemove = (e) => {
       const diffX = Math.floor((e.clientX - clientX) / 10) * 10
@@ -160,7 +182,7 @@ export default function Home() {
       const curY = top + diffY
       curManifest.style.left = `${curX}px`
       curManifest.style.top = `${curY}px`
-      handlerUpdateManifest(manifest, curX, curY)
+      handlerUpdateManifest(manifest, { position: { left: curX, top: curY }})
     }
     document.onmouseup = (e) => {
       main.style.cursor = "pointer";
@@ -174,15 +196,83 @@ export default function Home() {
     e.stopPropagation()
     const bool =  window.confirm("Are you sure you want to remove this memo?")
     if(!bool) return
-    setManifestList(manifestList.filter( t=> t.id !== id))
+    const updateData = manifestList.filter( t=> t.id !== id)
+    setManifestList(updateData)
+    setStorageItem(TODOLIST, updateData)
+  }
+
+  /* 改变便签尺寸 */
+  function handlerResizeManfest(e, manifest){
+    e.stopPropagation()
+    hanlderClickManifest(manifest)
+    setDragDown(true)
+    const main = document.getElementById('main')
+    main.style.cursor = "nw-resize";
+    const { clientX, clientY } = e
+    const { id, size } = manifest
+    const { width, height } = size
+    const curManifest = document.getElementById(id)
+    document.onmousemove = (e) => {
+      const diffX = e.clientX - clientX
+      const diffY = e.clientY - clientY
+      const curWidth =  Math.floor(((width + diffX) < minManifestWidth ? minManifestWidth : width + diffX) / 10) * 10
+      const curHeight = Math.floor(((height + diffY) < minManifestHeight ? minManifestHeight : height + diffY) / 10) * 10
+      handlerUpdateManifest(manifest, { size: { width: curWidth, height: curHeight}})
+      curManifest.style.width = `${curWidth}px`
+      curManifest.style.height = `${curHeight}px`
+    }
+    document.onmouseup = (e) => {
+      main.style.cursor = "pointer";
+      setDragDown(false)
+      document.onmousemove = null
+    }
+  }
+
+  /* 编辑便签 */
+  function hanlderEditManifest(e, manifest){
+    handlerUpdateManifest(manifest, { text: e.target.value })
+  }
+
+  /* 初始化主题色 */
+  function initThemeMode(){
+    const body = document.querySelector("body");
+    const storageTheme = getStorageItem(THEME)
+    if(storageTheme){
+      if (storageTheme === DARK) {
+        body.classList.add(DARK);
+        setStorageItem(THEME, DARK);
+      } else {
+        body.classList.remove(DARK);
+        setStorageItem(THEME, LIGHT);
+      }
+      return;
+    }
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      body.classList.add(DARK);
+      setStorageItem(THEME, DARK);
+    }
+  }
+
+  /* 修改主题色 */
+  function toggleTheme(){
+    const body = document.querySelector("body");
+    const themeMode =  getStorageItem(THEME)
+    if (themeMode === LIGHT) {
+      body.classList.add(DARK);
+      setStorageItem(THEME, DARK);
+    } else {
+      body.classList.remove(DARK);
+      setStorageItem(THEME, LIGHT);
+    }
+    draw()
   }
  
 
   return (
     <div className={styles.container}>
       <Head>
-        <title>nine</title>
-        <meta name="description" content="Generated by create next app" />
+        <title>Todolist panel</title>
+        <meta name="description" content="a quick to-do panel management tool" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -196,10 +286,10 @@ export default function Home() {
             className={`${styles.manifest} ${isDragDown && actveId === item.id ? `${styles.active}` : ''}`}
             id={item.id}
             style={{
-              width: item.width,
-              height: item.height,
-              left: item.left,
-              top: item.top,
+              width: item.size.width,
+              height: item.size.height,
+              left: item.position.left,
+              top: item.position.top,
               zIndex: item.zIndex
             }}
             onClick={() => hanlderClickManifest(item)}
@@ -208,7 +298,8 @@ export default function Home() {
               <span className={styles.close}  onClick={(e) => handlerDelManifest(item,e)}>一</span>
               <span className={styles.drag}  style={{ cursor: isDragDown ? 'grabbing' : 'grab' }} onMouseDown={(e) => hanlderManifestMouseDown(item, e)}></span>
             </div>
-            <div className={styles.content}>==={JSON.stringify(isDragDown)}</div>
+            <textarea className={styles.input} style={{ cursor: isDragDown ? 'grabbing' : 'text' }}  onInput={ (e) => hanlderEditManifest(e, item)} value={item.text} placeholder="Try adding a to-do"></textarea>
+            <div className={styles.resize} onMouseDown={ (e) => handlerResizeManfest(e,item)}></div>
           </div>
         ))}
       </main>
