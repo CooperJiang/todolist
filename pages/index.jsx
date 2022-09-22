@@ -178,8 +178,13 @@ export default function Home() {
     document.onmousemove = (e) => {
       const diffX = Math.floor((e.clientX - clientX) / 10) * 10
       const diffY = Math.floor((e.clientY - clientY) / 10) * 10
-      const curX = left + diffX
-      const curY = top + diffY
+      let curX = left + diffX
+      let curY = top + diffY
+      curX < 0 && (curX = 0)
+      curY < 0 && (curY = 0)
+      const { innerHeight, innerWidth } = window
+      curX > innerWidth - 80 && (curX = innerWidth - 80)
+      curY > innerHeight - 80 && (curY = innerHeight - 80)
       curManifest.style.left = `${curX}px`
       curManifest.style.top = `${curY}px`
       handlerUpdateManifest(manifest, { position: { left: curX, top: curY }})
