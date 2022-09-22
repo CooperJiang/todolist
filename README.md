@@ -2,11 +2,13 @@
 ![](https://img.shields.io/static/v1?label=Todolist&message=NextJs&color=brightgreen)
 ![](https://img.shields.io/static/v1?label=License&message=MIT&color=brightgreen)
 ![](https://img.shields.io/static/v1?label=Author&message=Snine&color=orange)
----
+
 
 ![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
 
 ### Table of Contents
+
+- [在线体验](https://todo.jiangly.com/)
 
 - [项目介绍](#项目介绍)
   
@@ -17,7 +19,11 @@
 - [错误报告](#错误报告)
   
 - [项目细节](#项目细节)
-  
+
+- [更多](#更多)
+
+### 在线体验
+在线体验地址：[Todolist演示网站](https://todo.jiangly.com/)
 
 ### 项目介绍
 
@@ -61,7 +67,16 @@
 请创建**Github**的[issues](https://github.com/longyanjiang/todolist/issues)，然后提供错误截图或代码，希望您尽可能提供足够多的信息。
 
 ### 项目细节
-
 ![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.gif)
 
-https://img.shields.io/static/v1?label=123123&message=3123121&color=brightgreen
+
+### 更多
+
+#### 找到我 🚀
+- 我的博客： [小九的博客](https://jiangly.com)
+- 我的掘金： [小九的掘金](https://juejin.cn/user/3861140568811576/posts)
+
+#### 推荐项目 🚀🚀🚀
+- 音乐聊天室: [小九的音乐聊天室](https://github.com/longyanjiang/Nine-chat-frontend)
+- 个人博客： [小九的开源博客](https://github.com/longyanjiang/Nine-blog-web)
+- 文档大全： [小九的文档合计](https://github.com/longyanjiang/docs)
