@@ -64,13 +64,18 @@
 }
 
 .active{
-  box-shadow: 10px 10px rgba(0,0,0,0.2);
+  box-shadow: 10px 10px var(--header-ac-bg);
 }
 
 .header{
   height: 16px;
   border-bottom: 1px solid var(--color);
   display: flex;
+  background: transparent;
+}
+
+.header_active{
+  background: var(--header-ac-bg);
 }
 
 .close{

@@ -299,7 +299,7 @@ export default function Home() {
             }}
             onClick={() => hanlderClickManifest(item)}
           >
-            <div className={styles.header}>
+            <div className={`${styles.header} ${isDragDown ? `${styles.header_active}` : ''}`}>
               <span className={styles.close}  onClick={(e) => handlerDelManifest(item,e)}>一</span>
               <span className={styles.drag}  style={{ cursor: isDragDown ? 'grabbing' : 'grab' }} onMouseDown={(e) => hanlderManifestMouseDown(item, e)}></span>
             </div>

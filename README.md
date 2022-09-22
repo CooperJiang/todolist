@@ -1,34 +1,59 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ❏ Todolist
 
-## Getting Started
+![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
 
-First, run the development server:
+### Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+- [项目介绍](#项目介绍)
+  
+- [用法指南](#用法指南)
+  
+- [常见的问题](#常见问题)
+  
+- [错误报告](#错误报告)
+  
+- [项目细节](#项目细节)
+  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 项目介绍
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+项目使用**React** 的**NextJs**服务端框架开发的网格便签，一款纯前端**web**项目，可以在日常中作为便签，待办事项，或者笔记本等场景使用，您只需要在任意地方拖动鼠标即可快速创建一个便签，同时所有便签可以随意移动、调整大小、以及删除。同时作为纯前端项目，所有数据将存储在本地，不做任何数据收集，请放心使用。
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+### 用法指南
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+1. 鼠标点击任何区域拖动即可创建一个便签。
+  
+2. 点击右下角拖动按钮即可改变便签大小，最低尺寸限制为`80*80`。
+  
+3. 点击便签顶部出现小手标志即可按下移动便签。
+  
+4. 点击便签内容区域即可快速编辑便签。
+  
+5. 使用`Alt + C`即可快速切换主题。
+  
+6. 使用`Alt + R`即可一次删除所有内容。
+  
 
-## Learn More
+### 常见的问题
 
-To learn more about Next.js, take a look at the following resources:
+#### 1. 是否可以在移动端上使用？
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    不支持在移动端使用，场景定位不适合在移动端上使用此产品，虽然可以做到支持移动端，但是似乎这种场景应该很少用到，如果会用到这种场景会考虑兼容到移动端。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+#### 2. 是否有暗色主题？
 
-## Deploy on Vercel
+       当没有手动设置的时候，将根据系统的主题自定义选择颜色，如果你想手动改变他，请使用快捷键`Alt + C`，即可修改主题，当修改主题之后将不再根据系统主题进行变换。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### 3. 使用什么技术栈开发的
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+        使用了基于**ReactJs**的服务端渲染框架**NextJs**进行开发，没有额外的库或者插件，拥有更好的**seo**，同时支持静态打包。
+
+#### 4. 是否需要后端数据支持
+
+        纯前端项目，无序任何后端接口交互，所有数据存储在本地，可以进行脱机工作
+
+### 错误报告
+
+请创建**Github**的[issues](https://github.com/longyanjiang/todolist/issues)，然后提供错误截图或代码，希望您尽可能提供足够多的信息。
+
+### 项目细节

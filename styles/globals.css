@@ -12,9 +12,11 @@ body{
 :root{
   --color: #000;
   --background: #fff;
+  --header-ac-bg: rgba(0, 0, 0, 0.05);
 }
 
 .DARK{
   --color: #fff;
   --background: #000;
+  --header-ac-bg: rgba(255, 255, 255, 0.1);
 }
