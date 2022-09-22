@@ -1,4 +1,8 @@
 # ❏ Todolist
+![](https://img.shields.io/static/v1?label=Todolist&message=NextJs&color=brightgreen)
+![](https://img.shields.io/static/v1?label=License&message=MIT&color=brightgreen)
+![](https://img.shields.io/static/v1?label=Author&message=Snine&color=orange)
+---
 
 ![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
 
@@ -57,3 +61,7 @@
 请创建**Github**的[issues](https://github.com/longyanjiang/todolist/issues)，然后提供错误截图或代码，希望您尽可能提供足够多的信息。
 
 ### 项目细节
+
+![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.gif)
+
+https://img.shields.io/static/v1?label=123123&message=3123121&color=brightgreen
