@@ -18,10 +18,16 @@ export default function Home() {
   const minManifestWidth = 80
   const minManifestHeight = 80
 
+  let sendMsgFromParentWindow = null
+
   useEffect(() => {
     draw();
     init()
     watchWindow();
+    window.addEventListener('message', messageHandler);
+    return () => {
+      window.addEventListener('message', messageHandler);
+    }
   }, []);
 
 
@@ -32,6 +38,17 @@ export default function Home() {
     const manifestList = storageTodo.length ? storageTodo : defaultTodo
     if(manifestList.length) setZIndex(Math.max(...manifestList.map( t => t.zIndex)))
     setManifestList(manifestList)
+  }
+
+  /* postMessage 信息接口 */
+  function messageHandler(event){
+    const { type } = event.data
+    if(type !== 'theme') return;
+    const THEME = event.data.data === 'dark' ? 'DARK' : 'LIGHT'
+    toggleTheme(THEME)
+    sendMsgFromParentWindow = (message) => {
+      event.source.postMessage(message, event.origin);
+    }
   }
 
   /* 绘制背景 */
@@ -67,9 +84,10 @@ export default function Home() {
     window.addEventListener("keydown", handlerKeydown);
   }
 
-  /*  */
+  /* 快捷键 alt+c 切换背景 alt+r清屏 */
   function handlerKeydown(e){
     if ((e.code === "KeyC" || e.keyCode === 67) && e.altKey) {
+      sendMsgFromParentWindow && sendMsgFromParentWindow({ type: 'theme', data: getStorageItem(THEME) === 'DARK' ? 'light' : 'dark' })
       return toggleTheme();
     }
     if ((e.code === "KeyR" || e.keyCode === 82) && e.altKey) {
@@ -77,7 +95,6 @@ export default function Home() {
       if(!bool) return;
       setManifestList([])
       setStorageItem(TODOLIST, [])
-      
     }
   }
 
@@ -259,17 +276,23 @@ export default function Home() {
   }
 
   /* 修改主题色 */
-  function toggleTheme(){
+  function toggleTheme(theme){
     const body = document.querySelector("body");
-    const themeMode =  getStorageItem(THEME)
-    if (themeMode === LIGHT) {
-      body.classList.add(DARK);
-      setStorageItem(THEME, DARK);
-    } else {
-      body.classList.remove(DARK);
-      setStorageItem(THEME, LIGHT);
+    if(!theme){
+      const themeMode =  getStorageItem(THEME)
+      if (themeMode === LIGHT) {
+        body.classList.add(DARK);
+        setStorageItem(THEME, DARK);
+      } else {
+        body.classList.remove(DARK);
+        setStorageItem(THEME, LIGHT);
+      }
+      draw()
+    }else{
+      body.classList.remove(DARK); 
+      body.classList.add(theme)
+      setStorageItem(THEME, theme);
     }
-    draw()
   }
  
 
