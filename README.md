@@ -11,7 +11,7 @@
 
 [English](./README_EN.md) | 简体中文
 
-![预览图](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
+![预览图](demo.jpg)
 
 ### [🔗 在线体验 Live Demo](https://todo.mmmss.com/)
 
@@ -44,7 +44,7 @@ Todolist是一个基于Next.js开发的网格便签应用，支持Markdown语法
 - ✅ 格式化工具栏，便于快速编辑Markdown内容
 - ✅ 快捷键支持（Alt+C切换主题，Alt+R清空所有便签）
 
-![操作演示](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.gif)
+![操作演示](demo.jpg)
 
 ## 🛠️ 技术栈
 
