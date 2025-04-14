@@ -1,82 +1,158 @@
-# ❏ Todolist
-![](https://img.shields.io/static/v1?label=Todolist&message=NextJs&color=brightgreen)
-![](https://img.shields.io/static/v1?label=License&message=MIT&color=brightgreen)
-![](https://img.shields.io/static/v1?label=Author&message=Snine&color=orange)
+# Todolist 📝
 
+<div align="center">
 
-![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
+![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+![React](https://img.shields.io/badge/React-17.0.2-blue)
+![Next.js](https://img.shields.io/badge/Next.js-12.3.1-black)
+![Author](https://img.shields.io/badge/Author-Snine-orange)
 
-### Table of Contents
+一个优雅的Markdown支持的便签应用 | A elegant Markdown-supported todo sticky note application
 
-- [在线体验](https://todo.jiangly.com/)
+[English](./README_EN.md) | 简体中文
 
-- [项目介绍](#项目介绍)
-  
-- [用法指南](#用法指南)
-  
-- [常见的问题](#常见问题)
-  
-- [错误报告](#错误报告)
-  
-- [项目细节](#项目细节)
+![预览图](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.png)
 
-- [更多](#更多)
+### [🔗 在线体验 Live Demo](https://todo.mmmss.com/)
 
-### 在线体验
-在线体验地址：[Todolist演示网站](https://todo.jiangly.com/)
+</div>
 
-### 项目介绍
+## 📖 目录 (Table of Contents)
 
-项目使用**React** 的**NextJs**服务端框架开发的网格便签，一款纯前端**web**项目，可以在日常中作为便签，待办事项，或者笔记本等场景使用，您只需要在任意地方拖动鼠标即可快速创建一个便签，同时所有便签可以随意移动、调整大小、以及删除。同时作为纯前端项目，所有数据将存储在本地，不做任何数据收集，请放心使用。
+- [✨ 项目介绍](#-项目介绍)
+- [🚀 功能特点](#-功能特点)
+- [🛠️ 技术栈](#️-技术栈)
+- [📦 安装与使用](#-安装与使用)
+- [📝 使用指南](#-使用指南)
+- [❓ 常见问题](#-常见问题)
+- [🤝 贡献指南](#-贡献指南)
+- [📃 许可证](#-许可证)
+- [👨‍💻 关于作者](#-关于作者) 
 
-### 用法指南
+## ✨ 项目介绍
 
-1. 鼠标点击任何区域拖动即可创建一个便签。
-  
-2. 点击右下角拖动按钮即可改变便签大小，最低尺寸限制为`80*80`。
-  
-3. 点击便签顶部出现小手标志即可按下移动便签。
-  
-4. 点击便签内容区域即可快速编辑便签。
-  
-5. 使用`Alt + C`即可快速切换主题。
-  
-6. 使用`Alt + R`即可一次删除所有内容。
-  
+Todolist是一个基于Next.js开发的网格便签应用，支持Markdown语法和实时预览。作为一款纯前端Web应用，它可以用作日常便签、待办事项或笔记本。无需后端支持，所有数据存储在本地，保护用户隐私。
 
-### 常见的问题
+最新版本增加了Markdown支持，类似Typora的实时编辑与预览体验，让便签内容更加丰富多样。
 
-#### 1. 是否可以在移动端上使用？
+## 🚀 功能特点
 
-    不支持在移动端使用，场景定位不适合在移动端上使用此产品，虽然可以做到支持移动端，但是似乎这种场景应该很少用到，如果会用到这种场景会考虑兼容到移动端。
+- ✅ 支持Markdown语法，实时编辑预览
+- ✅ 拖拽创建便签，随意调整大小和位置
+- ✅ 支持明暗两种主题，自动适应系统主题
+- ✅ 纯前端实现，数据存储在本地，保护隐私
+- ✅ 格式化工具栏，便于快速编辑Markdown内容
+- ✅ 快捷键支持（Alt+C切换主题，Alt+R清空所有便签）
 
-#### 2. 是否有暗色主题？
+![操作演示](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.gif)
 
-       当没有手动设置的时候，将根据系统的主题自定义选择颜色，如果你想手动改变他，请使用快捷键`Alt + C`，即可修改主题，当修改主题之后将不再根据系统主题进行变换。
+## 🛠️ 技术栈
 
-#### 3. 使用什么技术栈开发的
+- **框架**: [React](https://reactjs.org/) + [Next.js](https://nextjs.org/)
+- **Markdown**: [react-markdown](https://github.com/remarkjs/react-markdown)
+- **样式**: CSS Modules
+- **存储**: LocalStorage
 
-        使用了基于**ReactJs**的服务端渲染框架**NextJs**进行开发，没有额外的库或者插件，拥有更好的**seo**，同时支持静态打包。
+## 📦 安装与使用
 
-#### 4. 是否需要后端数据支持
+### 前置条件
 
-        纯前端项目，无序任何后端接口交互，所有数据存储在本地，可以进行脱机工作
+- Node.js 14.x 或更高版本
+- npm 或 pnpm 包管理器
 
-### 错误报告
+### 安装步骤
 
-请创建**Github**的[issues](https://github.com/longyanjiang/todolist/issues)，然后提供错误截图或代码，希望您尽可能提供足够多的信息。
+1. 克隆仓库
+```bash
+git clone https://github.com/longyanjiang/todolist.git
+cd todolist
+```
 
-### 项目细节
-![](https://nine-1300678944.cos.ap-shanghai.myqcloud.com/todolist.gif)
+2. 安装依赖
+```bash
+pnpm install
+# 或
+npm install
+```
 
+3. 本地运行
+```bash
+pnpm dev
+# 或
+npm run dev
+```
 
-### 更多
+4. 构建生产版本
+```bash
+pnpm build
+# 或
+npm run build
+```
 
-#### 找到我 🚀
-- 我的博客： [小九的博客](https://jiangly.com)
-- 我的掘金： [小九的掘金](https://juejin.cn/user/3861140568811576/posts)
+## 📝 使用指南
 
-#### 推荐项目 🚀🚀🚀
-- 音乐聊天室: [小九的音乐聊天室](https://github.com/longyanjiang/Nine-chat-frontend)
-- 个人博客： [小九的开源博客](https://github.com/longyanjiang/Nine-blog-web)
-- 文档大全： [小九的文档合计](https://github.com/longyanjiang/docs)
+1. **创建便签**: 在任意空白区域拖动鼠标即可创建一个新便签。
+   
+2. **调整大小**: 点击右下角的调整按钮，拖动可改变便签大小（最小尺寸为80×80像素）。
+   
+3. **移动便签**: 点击便签顶部，鼠标会变为小手，按住拖动即可移动。
+   
+4. **编辑便签**: 点击便签内容区域进入编辑模式，支持Markdown语法。
+   
+5. **格式化工具**: 编辑时上方会显示格式化工具栏，可快速应用Markdown格式。
+   
+6. **切换主题**: 使用`Alt + C`快捷键切换明暗主题。
+   
+7. **清空便签**: 使用`Alt + R`快捷键一次性清除所有便签。
+
+## ❓ 常见问题
+
+### 是否支持移动端使用？
+
+目前不支持在移动端使用。本应用主要为桌面环境设计，暂不考虑移动端的兼容。如果确实有这方面的需求，后续版本可能会考虑。
+
+### 如何切换暗色主题？
+
+默认情况下，应用会根据系统主题自动选择明暗模式。如需手动切换，请使用快捷键`Alt + C`。手动设置后，应用将不再跟随系统主题变化。
+
+### 数据会上传到服务器吗？
+
+不会。所有数据仅存储在浏览器的本地存储中，不会上传到任何服务器，可以完全离线工作。
+
+## 🤝 贡献指南
+
+欢迎所有形式的贡献，包括但不限于：
+
+- 提交问题或功能请求
+- 提交代码改进
+- 改进文档
+
+### 提交问题或Bug
+
+请通过[GitHub Issues](https://github.com/longyanjiang/todolist/issues)提交问题，并尽可能提供以下信息：
+
+- 详细的问题描述
+- 复现步骤
+- 浏览器和操作系统信息
+- 相关的截图（如适用）
+
+### 代码贡献
+
+1. Fork本仓库
+2. 创建您的功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交您的改动 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 开启一个Pull Request
+
+## 📃 许可证
+
+本项目采用MIT许可证 - 详细信息请查看 [LICENSE](LICENSE) 文件。
+
+## 👨‍💻 关于作者
+
+- 博客： [小九的博客](https://jiangly.com)
+- 掘金： [小九的掘金](https://juejin.cn/user/3861140568811576/posts)
+
+---
+
+如果您觉得这个项目有帮助，请给它一个⭐️！

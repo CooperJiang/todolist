@@ -5,7 +5,7 @@ import { TODOLIST } from '../constants';
 
 const useManifestInteractions = (minWidth = 80, minHeight = 80) => {
   const [manifestList, setManifestList] = useState([]);
-  const [activeId, setActiveId] = useState(0);
+  const [activeId, setActiveId] = useState('');
   const [isDragging, setIsDragging] = useState(false);
   const [zIndex, setZIndex] = useState(1000);
   const [cacheCreateItem, setCacheCreateItem] = useState({ 

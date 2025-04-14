@@ -1,4 +1,5 @@
-import React, { useCallback, memo } from 'react';
+import React, { useCallback, memo, useState, useEffect } from 'react';
+import MarkdownEditor from './MarkdownEditor';
 import styles from '../styles/Home.module.css';
 
 const Manifest = ({
@@ -11,6 +12,20 @@ const Manifest = ({
   onEdit,
   onResize
 }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  
+  // 当便签被激活时，自动进入编辑模式
+  useEffect(() => {
+    if (isActive) {
+      if (!isDragging) {
+        setIsEditing(true);
+      }
+    } else {
+      // 便签失去焦点时，退出编辑模式
+      setIsEditing(false);
+    }
+  }, [isActive, isDragging]);
+
   const handleDelete = useCallback((e) => {
     e.stopPropagation();
     onDelete(item.id);
@@ -21,8 +36,8 @@ const Manifest = ({
     onDragStart(item, e);
   }, [item, onDragStart]);
 
-  const handleEdit = useCallback((e) => {
-    onEdit(item, e.target.value);
+  const handleEdit = useCallback((text) => {
+    onEdit(item, text);
   }, [item, onEdit]);
 
   const handleResize = useCallback((e) => {
@@ -30,9 +45,27 @@ const Manifest = ({
     onResize(e, item);
   }, [item, onResize]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e) => {
+    // 防止点击编辑器内部元素时触发
+    if (e.target.closest(`.${styles.contentWrapper}`)) {
+      return;
+    }
+    
     onActivate(item.id);
   }, [item.id, onActivate]);
+
+  // 更新handleClickOutside，根据shouldClose参数决定是否退出编辑
+  const handleClickOutside = useCallback((shouldClose = true) => {
+    // 如果shouldClose为false，则是要进入编辑模式
+    if (!shouldClose) {
+      if (isActive) {
+        setIsEditing(true);
+      }
+    } else if (shouldClose) {
+      // 退出编辑模式但保持便签激活状态
+      // 我们不需要做什么，编辑器会自动从编辑状态变成预览状态
+    }
+  }, [isActive]);
 
   return (
     <div
@@ -67,13 +100,15 @@ const Manifest = ({
         >
         </span>
       </div>
-      <textarea 
-        className={styles.input} 
-        style={{ cursor: isDragging ? 'grabbing' : 'text' }}
-        onChange={handleEdit}
-        value={item.text} 
-        placeholder="Try adding a to-do"
-      />
+      <div className={styles.contentWrapper}>
+        <MarkdownEditor
+          value={item.text}
+          onChange={handleEdit}
+          placeholder="点击添加内容 (支持Markdown格式)"
+          isEditing={isActive && isEditing}
+          onClickOutside={handleClickOutside}
+        />
+      </div>
       <div 
         className={styles.resize} 
         onMouseDown={handleResize}
